@@ -52,9 +52,28 @@ router.get('/search', requireAuth, (req, res) => {
   });
 });
 
-// GET /api/customers — list all
+// GET /api/customers — list all with enriched health data
 router.get('/', requireAuth, (req, res) => {
-  const customers = db.prepare('SELECT * FROM customers ORDER BY name ASC').all();
+  const rows = db.prepare('SELECT * FROM customers ORDER BY name ASC').all();
+  const customers = rows.map((c) => {
+    const { score, status } = calculateHealthScore(c);
+    const issues = detectIssues(c);
+    return {
+      id: c.id,
+      name: c.name,
+      industry: c.industry,
+      csm: c.csm,
+      plan: c.plan,
+      mrr: c.mrr,
+      renewalDaysLeft: c.renewal_days_left,
+      lastLoginDaysAgo: c.last_login_days_ago,
+      usageChangePercent: c.usage_change_percent,
+      supportTicketsCount: c.support_tickets_count,
+      npsScore: c.nps_score,
+      health: { score, status },
+      issuesCount: issues.length,
+    };
+  });
   res.json({ customers });
 });
 

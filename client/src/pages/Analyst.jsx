@@ -1,37 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { searchCustomer } from '../api/customers';
 import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
-import HealthBadge from '../components/HealthBadge';
-import IssuesList from '../components/IssuesList';
-import ActionsList from '../components/ActionsList';
-import CTACard from '../components/CTACard';
-import EmailDraft from '../components/EmailDraft';
+import AnalysisPanel from '../components/AnalysisPanel';
 
 const QUICK_SEARCHES = ['ABC Corp', 'TechWave Inc', 'Zenith Finance', 'Nova Retail', 'Apex Media'];
 
 export default function Analyst() {
-  const [query, setQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('name') || '');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function handleSearch() {
-    setError('');
-    setResult(null);
-    setLoading(true);
-    try {
-      const res = await searchCustomer(query);
-      setResult(res.data);
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch customer data.');
-    } finally {
-      setLoading(false);
+  // Auto-search if name is passed via URL
+  useEffect(() => {
+    const name = searchParams.get('name');
+    if (name) {
+      setQuery(name);
+      runSearch(name);
     }
-  }
+  }, []);
 
-  function handleQuick(name) {
-    setQuery(name);
+  function runSearch(name) {
     setError('');
     setResult(null);
     setLoading(true);
@@ -41,31 +33,39 @@ export default function Analyst() {
       .finally(() => setLoading(false));
   }
 
+  function handleSearch() {
+    if (query.trim()) runSearch(query.trim());
+  }
+
+  function handleQuick(name) {
+    setQuery(name);
+    runSearch(name);
+  }
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        {/* Search section */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-md p-6 mb-8">
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-4">
-            Customer Lookup
-          </h2>
-          <SearchBar
-            value={query}
-            onChange={setQuery}
-            onSearch={handleSearch}
-            loading={loading}
-          />
+      {/* Page header */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-6 py-5">
+          <h1 className="text-xl font-bold text-gray-900">Customer Analysis</h1>
+          <p className="text-sm text-gray-400 mt-0.5">Look up a customer to see their full health report</p>
+        </div>
+      </div>
 
-          {/* Quick search chips */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            <span className="text-xs text-gray-400 self-center">Quick:</span>
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        {/* Search card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Customer Lookup</p>
+          <SearchBar value={query} onChange={setQuery} onSearch={handleSearch} loading={loading} />
+          <div className="flex flex-wrap gap-2 mt-3">
+            <span className="text-xs text-gray-400 self-center">Quick search:</span>
             {QUICK_SEARCHES.map((name) => (
               <button
                 key={name}
                 onClick={() => handleQuick(name)}
-                className="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-600 px-3 py-1.5 rounded-full transition-all border border-transparent hover:border-blue-200"
+                className="text-xs bg-gray-100 hover:bg-blue-50 hover:text-blue-700 text-gray-500 px-3 py-1.5 rounded-full transition-all border border-transparent hover:border-blue-200"
               >
                 {name}
               </button>
@@ -89,62 +89,21 @@ export default function Analyst() {
         )}
 
         {/* Results */}
-        {result && !loading && (
-          <div className="space-y-5">
-            {/* Customer meta */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
-              <div className="flex items-start justify-between flex-wrap gap-4">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">{result.customer.name}</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {result.customer.industry} &middot; {result.customer.plan} Plan &middot; CSM: {result.customer.csm}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-400">MRR</p>
-                  <p className="text-xl font-bold text-gray-900">${result.customer.mrr.toLocaleString()}</p>
-                </div>
-              </div>
-
-              {/* Data chips */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-                <Chip label="Last Login" value={`${result.customer.lastLoginDaysAgo}d ago`} />
-                <Chip label="Usage Change" value={`${result.customer.usageChangePercent > 0 ? '+' : ''}${result.customer.usageChangePercent}%`} />
-                <Chip label="Support Tickets" value={result.customer.supportTicketsCount} />
-                <Chip label="Renewal In" value={`${result.customer.renewalDaysLeft}d`} />
-              </div>
-            </div>
-
-            <HealthBadge score={result.health.score} status={result.health.status} />
-            <IssuesList issues={result.issues} />
-            <ActionsList actions={result.actions} />
-            <CTACard cta={result.cta} status={result.health.status} />
-            <EmailDraft email={result.email} />
-          </div>
-        )}
+        {result && !loading && <AnalysisPanel result={result} />}
 
         {/* Empty state */}
         {!result && !loading && !error && (
-          <div className="text-center py-20 text-gray-400">
+          <div className="text-center py-20">
             <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
             <p className="text-sm font-medium text-gray-500">Search a customer to see their health report</p>
-            <p className="text-xs text-gray-400 mt-1">Try one of the quick search options above</p>
+            <p className="text-xs text-gray-400 mt-1">Use quick search above or type a customer name</p>
           </div>
         )}
       </div>
-    </div>
-  );
-}
-
-function Chip({ label, value }) {
-  return (
-    <div className="bg-slate-50 rounded-xl px-3 py-2.5">
-      <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-      <p className="text-sm font-bold text-gray-800">{value}</p>
     </div>
   );
 }

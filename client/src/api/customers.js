@@ -13,3 +13,7 @@ export function searchCustomer(name) {
     headers: authHeaders(),
   });
 }
+
+export function getAllCustomers() {
+  return axios.get(`${API}/api/customers`, { headers: authHeaders() });
+}
