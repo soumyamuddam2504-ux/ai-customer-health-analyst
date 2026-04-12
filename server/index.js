@@ -11,6 +11,8 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
   'http://localhost:5175',
+  'http://localhost:5176',
+  'http://localhost:5177',
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
@@ -20,6 +22,7 @@ app.use(express.json());
 createTables();
 seed();
 
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/customers', require('./routes/customers'));
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

@@ -1,7 +1,17 @@
 const db = require('./database');
+const bcrypt = require('bcrypt');
 
 function seed() {
   const count = db.prepare('SELECT COUNT(*) as c FROM customers').get();
+
+  // Seed test user if not exists
+  const userCount = db.prepare('SELECT COUNT(*) as c FROM users').get();
+  if (userCount.c === 0) {
+    const hashed = bcrypt.hashSync('Test@123', 10);
+    db.prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)').run('Soumya', 'test@gainsight.com', hashed);
+    console.log('Seeded test user: test@gainsight.com / Test@123');
+  }
+
   if (count.c > 0) return;
 
   const insert = db.prepare(`

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { searchCustomer } from '../api/customers';
+import Navbar from '../components/Navbar';
 import SearchBar from '../components/SearchBar';
 import HealthBadge from '../components/HealthBadge';
 import IssuesList from '../components/IssuesList';
@@ -42,18 +43,7 @@ export default function Analyst() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-xs font-bold">AI</span>
-          </div>
-          <div>
-            <h1 className="text-base font-bold text-gray-900">AI Customer Health Analyst</h1>
-            <p className="text-xs text-gray-400">Gainsight-aligned CSM Intelligence</p>
-          </div>
-        </div>
-      </div>
+      <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-10">
         {/* Search section */}

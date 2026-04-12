@@ -1,5 +1,6 @@
 const express = require('express');
 const db = require('../db/database');
+const { requireAuth } = require('../middleware/auth');
 const { calculateHealthScore } = require('../logic/healthScore');
 const { detectIssues } = require('../logic/issueDetector');
 const { recommendActions } = require('../logic/actionEngine');
@@ -9,7 +10,7 @@ const { generateEmail } = require('../logic/emailGenerator');
 const router = express.Router();
 
 // GET /api/customers/search?name=ABC Corp
-router.get('/search', (req, res) => {
+router.get('/search', requireAuth, (req, res) => {
   const { name } = req.query;
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'Customer name is required.' });
@@ -52,7 +53,7 @@ router.get('/search', (req, res) => {
 });
 
 // GET /api/customers — list all
-router.get('/', (req, res) => {
+router.get('/', requireAuth, (req, res) => {
   const customers = db.prepare('SELECT * FROM customers ORDER BY name ASC').all();
   res.json({ customers });
 });
