@@ -32,13 +32,13 @@ export default function Dashboard() {
 
       {/* Page header */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 py-5">
-          <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+          <h1 className="text-lg sm:text-xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-sm text-gray-400 mt-0.5">Customer health overview across your portfolio</p>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">{error}</div>
@@ -52,25 +52,13 @@ export default function Dashboard() {
         ) : (
           <>
             {/* Stat cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="col-span-1">
-                <StatCard label="Total Customers" value={customers.length} color="blue" icon="👥" />
-              </div>
-              <div className="col-span-1">
-                <StatCard label="Total MRR" value={`$${(totalMRR / 1000).toFixed(1)}k`} color="green" icon="💰" />
-              </div>
-              <div className="col-span-1">
-                <StatCard label="MRR at Risk" value={`$${(mrrAtRisk / 1000).toFixed(1)}k`} sub={`${atRisk.length} customers`} color="red" icon="⚠" />
-              </div>
-              <div className="col-span-1">
-                <StatCard label="Renewals Due" value={renewalsSoon} sub="within 30 days" color="amber" icon="📅" />
-              </div>
-              <div className="col-span-1">
-                <StatCard label="Need Attention" value={needAttention} sub="Warning + At Risk" color="purple" icon="🔔" />
-              </div>
-              <div className="col-span-1">
-                <StatCard label="Healthy" value={good.length} sub={`${Math.round((good.length / customers.length) * 100) || 0}% of portfolio`} color="green" icon="✓" />
-              </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+              <StatCard label="Total Customers" value={customers.length} color="blue" icon="👥" />
+              <StatCard label="Total MRR" value={`$${(totalMRR / 1000).toFixed(1)}k`} color="green" icon="💰" />
+              <StatCard label="MRR at Risk" value={`$${(mrrAtRisk / 1000).toFixed(1)}k`} sub={`${atRisk.length} customers`} color="red" icon="⚠" />
+              <StatCard label="Renewals Due" value={renewalsSoon} sub="within 30 days" color="amber" icon="📅" />
+              <StatCard label="Need Attention" value={needAttention} sub="Warning + At Risk" color="purple" icon="🔔" />
+              <StatCard label="Healthy" value={good.length} sub={`${Math.round((good.length / customers.length) * 100) || 0}% of portfolio`} color="green" icon="✓" />
             </div>
 
             {/* Charts */}

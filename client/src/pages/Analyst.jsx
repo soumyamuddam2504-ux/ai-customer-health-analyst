@@ -54,7 +54,7 @@ export default function Analyst() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Search card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-8">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Customer Lookup</p>

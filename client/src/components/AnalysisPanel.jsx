@@ -26,8 +26,8 @@ export default function AnalysisPanel({ result }) {
   return (
     <div className="space-y-5">
       {/* Customer header card */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-        <div className="flex items-start justify-between flex-wrap gap-4 mb-5">
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm">
+        <div className="flex items-start justify-between flex-wrap gap-3 mb-4 sm:mb-5">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0">
               <span className="text-xl font-bold text-blue-600">{customer.name[0]}</span>

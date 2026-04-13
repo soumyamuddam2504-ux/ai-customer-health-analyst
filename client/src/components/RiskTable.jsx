@@ -37,10 +37,10 @@ export default function RiskTable({ customers }) {
                 <p className="text-xs text-gray-400">{c.industry} · {c.csm}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-gray-500">${c.mrr.toLocaleString()}/mo</span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-xs font-bold text-gray-500 hidden sm:inline">${c.mrr.toLocaleString()}/mo</span>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[c.health.status]}`}>
-                {c.health.status} · {c.health.score}
+                <span className="hidden sm:inline">{c.health.status} · </span>{c.health.score}
               </span>
             </div>
           </div>
