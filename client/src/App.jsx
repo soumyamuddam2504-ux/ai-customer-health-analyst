@@ -14,7 +14,7 @@ function Protected({ children }) {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/ai-customer-health-analyst">
         <Routes>
           <Route path="/login"     element={<Login />} />
           <Route path="/signup"    element={<Signup />} />
